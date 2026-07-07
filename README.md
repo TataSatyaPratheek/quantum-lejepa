@@ -12,7 +12,22 @@ Personal research applying the **LeJEPA** self-supervised framework (Balestriero
 quantum feature maps, and identifying the single operator that governs quantum-kernel trainability.
 Independent of my work at Accelequant.
 
+## Key results at a glance
+
+| M₂ diagnostic | Result |
+|:--|:--|
+| Circuit screening | 216 configs ranked in **75 s**, no training |
+| Rank → accuracy | full-rank 256/256 → **88–91%** · half-rank Ry+CZ 124/256 → **78%** |
+| **Headline discovery** | the popular **Ry+CZ ansatz reaches only O(d), not U(d)** (rank 124/256) — exposed in 75 s, no training |
+| Gradient survival | local/global variance ratio **>10⁹ at n = 20** |
+| Low-data | **99.3% from N = 50** (RBF 90.3%, XGBoost 86.0%) |
+| Honest boundary | fails on regression, temporal, and contact-rich control |
+| Verification | Lean 4 (572 decls, 0 `sorry`, 4 axioms) + Coq · Isabelle · Agda + Sage/SymPy/NumPy/SciPy |
+
 ## Papers
+
+**Start here → `Second-Moment-Operator.pdf`** (the result). Then theory → `Quantum-LeJEPA-Theory`,
+numbers → `Empirical-Results`, reproduction protocol → `Benchmarking-Plan`.
 
 | | |
 |:--|:--|
@@ -29,7 +44,7 @@ concentration / barren plateaus (trainability), its **rank** equals the dimensio
 Lie algebra (expressivity), and its **local restriction** bounds the gradient. So one computable
 object predicts whether a circuit can be trained — *before* you train it.
 
-## What the experiments show (honest, including where it fails)
+## What the experiments show
 
 - **M₂ ranks circuits without training.** Screening **216 circuit configurations in 75 seconds**,
   M₂'s spectral rank predicts downstream accuracy: full-rank designs (256/256, Haar distance <0.07)
@@ -42,10 +57,19 @@ object predicts whether a circuit can be trained — *before* you train it.
   decays as 1/4ⁿ — a **local-to-global ratio exceeding 10⁹ at n = 20**.
 - **Low-data advantage.** M₂-selected kernels hit **99.3% from N = 50** samples (vs RBF 90.3%,
   XGBoost 86.0%); classical overtakes only past N ≈ 500.
-- **Where it does *not* help (stated plainly).** Continuous regression (R² 0.29 vs RBF 0.67),
-  temporal prediction (kernel–task correlation r = 0.019), and contact-rich control all fail
-  pre-verification. Quantum kernels help for **static, discrete, geometric classification in the
-  low-data regime** — and the paper says exactly where the boundary is.
+
+## Where quantum kernels *don't* help (stated plainly)
+
+The honest boundary is as much the contribution as the wins. Pre-verification (proceed only when the
+kernel–task correlation `r > 0.5`) ruled out three whole task families:
+
+- **Continuous regression** — quantum R² 0.29 vs RBF 0.67; the fidelity kernel makes piecewise-constant
+  interpolants, wrong for smooth targets.
+- **Temporal / dynamic prediction** — kernel–task correlation `r = 0.019` (near zero).
+- **Contact-rich control** — `r = 0.21`, below the viability threshold.
+
+Quantum kernels help for **static, discrete, geometric classification in the low-data regime** — and
+the papers say exactly where that boundary is, rather than claiming a blanket advantage.
 
 ## Cross-prover verification
 
@@ -60,15 +84,36 @@ actual scripts live in [`verification/`](./verification):
 | **Agda** | [`verification/agda`](./verification/agda) (4) | Jensen, local cost, moment operator, gradient bound (constructive) |
 | **Sage / SymPy / NumPy / SciPy** | [`sage`](./verification/sage) · [`sympy`](./verification/sympy) · [`numpy`](./verification/numpy) · [`scipy`](./verification/scipy) | exact M₂ spectra, Weingarten/Haar integrals, Pfaffians, gradient scaling, isotropy — symbolic + Monte-Carlo |
 
-Run everything with [`verification/verify_all.sh`](./verification/verify_all.sh). The same theorem —
-e.g. the gradient-variance identity and the M₂ spectral gap — is checked in three independent proof
-assistants plus two computer-algebra systems, so no single tool's soundness is load-bearing. *The
-main Lean 4 library is kept in a separate development; this repository holds the papers and the
-cross-prover checks.*
+The same theorem — e.g. the gradient-variance identity and the M₂ spectral gap — is checked in three
+independent proof assistants plus two computer-algebra systems, so no single tool's soundness is
+load-bearing. The provers/CAS scripts are self-contained; you can re-check the numerics directly:
+
+```bash
+python3 verification/numpy/haar_verify.py      # Haar 4th moment, d = 2..16
+python3 verification/scipy/isotropy_verify.py  # isotropy = unique minimizer
+coqc    verification/coq/cross_verify.v         # Chebyshev + bridge inequality (Qed)
+```
+
+*(`verification/verify_all.sh` orchestrates the full six-tool suite against the separate Lean
+development; the main Lean 4 library is kept in that separate repo, so this one holds the papers and
+the standalone cross-prover checks.)*
+
+## Citation
+
+```bibtex
+@misc{tata2026quantumlejepa,
+  title  = {Quantum LeJEPA: The Second Moment Operator Determines Quantum Kernel Trainability},
+  author = {Tata, Satya Pratheek},
+  year   = {2026},
+  note   = {Personal research; Lean 4 + Coq/Isabelle/Agda cross-verification},
+  url    = {https://github.com/TataSatyaPratheek/quantum-lejepa}
+}
+```
 
 ## Author
 
-**Satya Pratheek Tata** — [github.com/TataSatyaPratheek](https://github.com/TataSatyaPratheek)
+**Satya Pratheek Tata** — [satyapratheek2000@gmail.com](mailto:satyapratheek2000@gmail.com)
+· [github.com/TataSatyaPratheek](https://github.com/TataSatyaPratheek)
 · [LinkedIn](https://linkedin.com/in/satyapratheek-tata)
 
 Personal research project, independent of my work at Accelequant.
