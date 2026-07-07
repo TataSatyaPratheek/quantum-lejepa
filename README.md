@@ -1,7 +1,8 @@
 # Quantum LeJEPA
 
-**A joint-embedding predictive architecture for quantum machine learning — and the operator that
-tells you, without training, which quantum circuits can actually learn.**
+**A fibre-bundle formulation of quantum self-supervised learning that unifies circuit trainability,
+expressivity, and geometry in one operator — the one that tells you, without training, which quantum
+circuits can actually learn.**
 
 ![Domain](https://img.shields.io/badge/quantum%20ML-representation%20learning-1f6feb)
 ![Object](https://img.shields.io/badge/M%E2%82%82-second%20moment%20operator-6f42c1)
@@ -43,6 +44,22 @@ Hilbert space whose spectrum encodes three things at once: its **spectral gap** 
 concentration / barren plateaus (trainability), its **rank** equals the dimension of the dynamical
 Lie algebra (expressivity), and its **local restriction** bounds the gradient. So one computable
 object predicts whether a circuit can be trained — *before* you train it.
+
+## The unifying picture: one operator, one geometry
+
+The deeper contribution is that these properties are not separate results — they are one object seen
+from different angles. **Q-JEPA is a fibre bundle** `(X, ℋ, U(d))`: the data is the base space, the
+quantum Hilbert space the fibre, the encoder a section, and the predictor a connection. In that
+language the training **energy `E(x,y) = ‖φ(y) − V(φ(x))‖²` is literally the bundle's curvature**
+(the connection's holonomy defect) — so **collapse = flatness**, **learning = curvature**, and a
+barren plateau is the geometry going flat everywhere at once.
+
+**M₂ is the operator that ties it all together.** Concentration, gradient vanishing, classical
+simulability, and curvature are all projections of the M₂ spectrum onto different subspaces — the way
+the Riemann tensor carries every local curvature. The full theory (`Quantum-LeJEPA-Theory.pdf`)
+develops this as a *fugue on six interlocking themes* — Jensen's inequality on spectra, collapse, the
+quantum concentration bound, fibre-bundle geometry, M₂, and gradient variance — with every pair
+connected by a theorem, all machine-checked.
 
 ## What the experiments show
 
