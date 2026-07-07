@@ -47,11 +47,24 @@ object predicts whether a circuit can be trained — *before* you train it.
   pre-verification. Quantum kernels help for **static, discrete, geometric classification in the
   low-data regime** — and the paper says exactly where the boundary is.
 
-## Formal verification
+## Cross-prover verification
 
-The mathematics is formalized in **Lean 4 (572 declarations, 0 `sorry`, 4 axioms)** and
-cross-checked across six independent tools (SageMath, Isabelle, Coq/Rocq, Agda, SymPy, NumPy). *This
-repository contains the papers; the Lean development is kept separate.*
+The mathematics is formalized in **Lean 4 (572 declarations, 0 `sorry`, 4 axioms)** and then
+**independently re-verified across a suite of theorem provers and computer-algebra systems** — the
+actual scripts live in [`verification/`](./verification):
+
+| Tool | Files | What it checks |
+|:--|:--|:--|
+| **Coq / Rocq** | [`verification/coq`](./verification/coq) (4) | moment operator, gradient bound, local purity, and `cross_verify.v` (Chebyshev bound, bridge inequality) — machine-proved with `Qed` |
+| **Isabelle/HOL** | [`verification/isabelle`](./verification/isabelle) (11) | spectral gap, critical depth, collapse ↔ isotropy, gradient chain, effective depth |
+| **Agda** | [`verification/agda`](./verification/agda) (4) | Jensen, local cost, moment operator, gradient bound (constructive) |
+| **Sage / SymPy / NumPy / SciPy** | [`sage`](./verification/sage) · [`sympy`](./verification/sympy) · [`numpy`](./verification/numpy) · [`scipy`](./verification/scipy) | exact M₂ spectra, Weingarten/Haar integrals, Pfaffians, gradient scaling, isotropy — symbolic + Monte-Carlo |
+
+Run everything with [`verification/verify_all.sh`](./verification/verify_all.sh). The same theorem —
+e.g. the gradient-variance identity and the M₂ spectral gap — is checked in three independent proof
+assistants plus two computer-algebra systems, so no single tool's soundness is load-bearing. *The
+main Lean 4 library is kept in a separate development; this repository holds the papers and the
+cross-prover checks.*
 
 ## Author
 

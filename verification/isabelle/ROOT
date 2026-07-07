@@ -1,0 +1,2 @@
+session cross_verify = HOL +
+  theories cross_verify collapse_iso chebyshev papers_11_12_13 phase1 critical_depth mele_effective_depth pillars qjepa gradient_bound
